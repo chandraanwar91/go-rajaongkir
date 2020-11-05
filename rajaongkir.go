@@ -172,6 +172,80 @@ func (r *rajaOngkir) GetCity(q QueryRequest) ServiceResult {
 	return ServiceResult{Error: errors.New("Invalid Request")}
 }
 
+func (r *rajaOngkir) GetSubdistrict(q QueryRequest) ServiceResult {
+
+	//make headers map
+	headers := make(map[string]string)
+	headers["Content-Type"] = "application/json"
+
+	var (
+		//path
+		path string
+
+		//responseWrapper single result
+		responseWrapper struct {
+			Rajaongkir struct {
+				Query   interface{} `json:"query"`
+				Status  Status      `json:"status"`
+				Results Subdistrict `json:"results"`
+			} `json:"rajaongkir"`
+		}
+
+		//responseWrapperList list result
+		responseWrapperList struct {
+			Rajaongkir struct {
+				Query   interface{}   `json:"query"`
+				Status  Status        `json:"status"`
+				Results []Subdistrict `json:"results"`
+			} `json:"rajaongkir"`
+		}
+	)
+
+	if q.SubdistrictID != "" && q.CityID == "" {
+		path = fmt.Sprintf("subdistrict?id=%s", q.CityID)
+
+		err := r.call("GET", path, nil, &responseWrapper, headers)
+
+		if err != nil {
+			return ServiceResult{Error: err}
+		}
+
+		return ServiceResult{Result: responseWrapper.Rajaongkir.Results}
+
+	} else if q.CityID != "" && q.SubdistrictID != "" {
+		path = fmt.Sprintf("subdistrict?id=%s&city=%s", q.CityID, q.ProvinceID)
+
+		err := r.call("GET", path, nil, &responseWrapper, headers)
+
+		if err != nil {
+			return ServiceResult{Error: err}
+		}
+
+		return ServiceResult{Result: responseWrapper.Rajaongkir.Results}
+	} else if q.SubdistrictID == "" && q.CityID != "" {
+		path = fmt.Sprintf("subdistrict?city=%s", q.CityID)
+
+		err := r.call("GET", path, nil, &responseWrapperList, headers)
+
+		if err != nil {
+			return ServiceResult{Error: err}
+		}
+
+		return ServiceResult{Result: responseWrapperList.Rajaongkir.Results}
+	} else {
+		path = "city"
+
+		err := r.call("GET", path, nil, &responseWrapperList, headers)
+
+		if err != nil {
+			return ServiceResult{Error: err}
+		}
+
+		return ServiceResult{Result: responseWrapperList.Rajaongkir.Results}
+	}
+	return ServiceResult{Error: errors.New("Invalid Request")}
+}
+
 //GetCost
 func (r *rajaOngkir) GetCost(q QueryRequest) ServiceResult {
 
