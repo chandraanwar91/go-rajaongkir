@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Bhinneka/go-rajaongkir"
+	ro "github.com/chandraanwar91/go-rajaongkir"
 )
 
 func main() {
