@@ -260,10 +260,25 @@ func (r *rajaOngkir) GetCost(q QueryRequest) ServiceResult {
 		query := url.Values{}
 		query.Set("origin", q.Origin)
 		query.Set("destination", q.Destination)
+		query.Set("originType", q.OriginType)
+		query.Set("destinationType", q.DestinationType)
 
 		weightString := strconv.Itoa(q.Weight)
 		query.Set("weight", weightString)
 		query.Set("courier", q.Courier)
+
+		if q.Length > 0 {
+			lengthString := strconv.Itoa(q.Length)
+			query.Set("length", lengthString)
+		}
+		if q.Height > 0 {
+			heightString := strconv.Itoa(q.Height)
+			query.Set("height", heightString)
+		}
+		if q.Width > 0 {
+			widthString := strconv.Itoa(q.Width)
+			query.Set("width", widthString)
+		}
 
 		err := r.call("POST", "cost", strings.NewReader(query.Encode()), &costWrapper, headers)
 
